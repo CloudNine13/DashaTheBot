@@ -1,4 +1,5 @@
 python-dotenv>=0.0.5
+transliterate
 python-telegram-bot
 wheel
 pip
