@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod
 from dotenv import load_dotenv, find_dotenv
 from telegram import ReplyKeyboardMarkup, KeyboardButton, Update, ReplyKeyboardRemove
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext, CallbackQueryHandler
+from src.modules.get_recipe import get_recipe
 
 
 def configure_logging() -> logging:
@@ -39,7 +40,7 @@ class ApplicationAbstractClass(ABC):
         pass
 
     @abstractmethod
-    def data_controller(self):
+    def data_controller(self, update: Update, context: CallbackContext) -> None:
         pass
 
     @abstractmethod
@@ -77,8 +78,21 @@ class CustomApplication(ApplicationAbstractClass):
         um.reply_text(text="Вас приветствует книга рецептов DashaCooking!")
         um.reply_text(text="Выберите действие", reply_markup=main_menu)
 
-    def data_controller(self):
-        pass
+    def data_controller(self, update, context):
+        print("data_controller: User made a callback!")
+        text = update.message.text
+        print(text)
+        chat_id = update.effective_chat.id
+        ReplyKeyboardRemove(remove_keyboard=True)
+
+        if text == "Посмотреть рецепт \U0001F372":
+
+            thread = threading.Thread(
+                target=get_recipe,
+                name="Get recipe",
+                args=(chat_id, context)
+            )
+            thread.start()
 
     def button_controller(self):
         pass
