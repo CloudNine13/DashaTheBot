@@ -1,14 +1,13 @@
-from telegram.ext import CallbackContext
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.constants import ParseMode
-
 import db
 import utils.config as configurations
 
+from telegram.ext import CallbackContext
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, KeyboardButton, ReplyKeyboardMarkup
+from telegram.constants import ParseMode
+from server.setactions.set_recipe import set_recipe
 from utils.randomizer import random_heart, random_emoji
 from utils.clear_config import clear_configurations
 from utils.prepare_keyboard import prepare_keyboard
-
 from models.recipe import Recipe
 from set_recipe import ask_subcategory, set_new_recipe
 from get_recipe import get_category_item, get_all
@@ -38,35 +37,36 @@ async def button_controller(update: Update, context: CallbackContext):
                 await get_category_item(update, context, recipe_type=choice[:-1])
 
     elif configurations.set_action is True:
-        if configurations.set_action:
-            configurations.db_set_trans = True
-
-        elif configurations.change_photo:
+        if configurations.change_photo:
             configurations.db_change = True
 
+        configurations.db_set_transition = True
         configurations.set_action = False
         configurations.change_photo = False
         recipe_object = configurations.recipe_object
 
         if choice == 'да':
             recipe_object.index += 1
-            await context.bot.send_message(
-                update.callback_query.message.chat.id,
-                'Жду изображений! Пожалуйста, после загрузки медиа, напишите готово, '
-                'чтобы подтвердить сохранение картинок. Спасибо ' + random_heart()
+            keyboard = [[KeyboardButton(text='готово')]]
+            reply_markup = ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True, one_time_keyboard=True)
+            await update.callback_query.message.reply_text(
+                'Жду изображений! Пожалуйста, после загрузки медиа, нажмите готово, чтобы '
+                'подтвердить сохранение картинок. Документы, не относящиеся к картинкам или'
+                f'фотографии, отправленные файлами не будут обработаны (ограничение телеграмм '
+                f'бота 😞). Спасибо {random_heart()}!',
+                reply_markup=reply_markup
             )
 
         elif choice == 'нет':
             recipe_object.index += 1
-            recipe_object.photo_path = None
+            recipe_object.photo_path = []
             assert recipe_object.index == recipe_object.max_index
             await context.bot.send_message(
                 update.callback_query.message.chat.id,
                 'Ну что же! Переходим к сохранению рецепта! Спасибо ' + random_heart()
             )
-            db.connect()
-            if configurations.db_set_trans:
-                await db.save_recipe(update.callback_query.message.chat.id, context.bot)
+            if configurations.db_set_transition:
+                await set_recipe(update.callback_query.message.chat.id, context.bot)
             elif configurations.db_change:
                 await db.update_item(update.callback_query.message.chat.id, context.bot)
 

@@ -1,8 +1,9 @@
 import os
+import cloudinary
+import nest_asyncio
+
 from sqlite3 import Connection
-
 from dotenv import load_dotenv
-
 from models.recipe import Recipe
 
 # SET
@@ -21,7 +22,7 @@ change_description: bool = False
 update_recipe: bool = False
 # UTILS
 start: bool = True
-db_set_trans: bool = False
+db_set_transition: bool = False
 db_change: bool = False
 recipe_type: bool = False
 #  OTHER
@@ -29,6 +30,7 @@ recipe_object: Recipe | None = None
 db_con: Connection | None = None
 data_array: list[Recipe] = []
 transaction_data = None
+photo_list: list = []
 
 
 def print_configurations():
@@ -49,7 +51,7 @@ def print_configurations():
         f'update_recipe: {update_recipe}\n\n'
         '# UTILS\n'
         f'start: {start}\n'
-        f'db_set_trans: {db_set_trans}\n'
+        f'db_set_trans: {db_set_transition}\n'
         f'db_change: {db_change}\n'
         f'recipe_type: {recipe_type}\n'
         f'recipe_object: {recipe_object}\n\n'
@@ -57,13 +59,26 @@ def print_configurations():
         f'db_con: {db_con}\n'
         f'data_array: {data_array}\n'
         f'transaction_data: {transaction_data}\n'
+        f'photo_list: {photo_list}\n'
     )
 
 
+# Plugins
+nest_asyncio.apply()
 load_dotenv()
+
 TOKEN: str = os.getenv('TOKEN')
 DASHA_NAME: str = os.getenv('DASHA_USER')
 DASHA_ID: int = int(os.getenv('DASHA_ID'))
 IGOR_NAME: str = os.getenv('IGOR_NAME')
 IGOR_ID: int = int(os.getenv('IGOR_ID'))
 MONGO_URI: str = os.getenv('MONGO_URI')
+CLOUD_NAME: str = os.getenv('CLOUD_NAME')
+API_KEY: str = os.getenv('API_KEY')
+API_SECRET: str = os.getenv('API_SECRET')
+
+cloudinary.config(
+    cloud_name=CLOUD_NAME,
+    api_key=API_KEY,
+    api_secret=API_SECRET
+)

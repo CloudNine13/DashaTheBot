@@ -1,34 +1,23 @@
 import sqlite3
-
 import utils.config as configurations
-from utils.photo_string import make_photo_string
+
+from utils.log_message import log_message
 from utils.clear_config import clear_configurations
+from utils.prepare_recipe_object import prepare_recipe_object
 from utils.randomizer import random_heart
 
 
 async def save_recipe(chat_id, bot):
-    configurations.set_action = False
-    configurations.start = True
-    recipe_object = configurations.recipe_object
-    print('recipe_object', recipe_object)
-    print('photo', recipe_object.photo_path)
-    if recipe_object.photo_path:
-        # ['1', '2', '3'] => "1, 2, 3"
-        photo_string = make_photo_string(recipe_object.photo_path)
-    else:
-        photo_string = None
     try:
-        cur = configurations.db_con.cursor()
-        print("Successfully Connected to SQLite")
-        sqlite_insert_query = ("INSERT INTO recipes (name, recipe_type, description, photo_path) VALUES ('{}','{}',"
-                               "'{}','{}')").format(recipe_object.name.lower(),
-                                                    recipe_object.recipe_type,
-                                                    recipe_object.description,
-                                                    photo_string
-                                                    )
-        cur.execute(sqlite_insert_query)
-        configurations.db_con.commit()
-        print("Record inserted successfully into table, index", cur.rowcount)
+        recipe_object = prepare_recipe_object()
+        # cur = configurations.db_con.cursor()
+        sqlite_insert_query = (f"INSERT INTO recipes (name, recipe_type, description, photo_path) VALUES "
+                               f"('{recipe_object.name.lower()}','{recipe_object.recipe_type}',"
+                               f"'{recipe_object.description}','{recipe_object.photo_path}')")
+        log_message(sqlite_insert_query)
+        # cur.execute(sqlite_insert_query)
+        # configurations.db_con.commit()
+        log_message("Record inserted successfully into table")
         await bot.send_message(chat_id,
                                "Рецепт успешно сохранён! Приятного приготовления и аппетита! " + random_heart())
 

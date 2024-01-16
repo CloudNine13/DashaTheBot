@@ -1,5 +1,4 @@
 from sqlite3 import Cursor, Connection
-
 from server.communication import connect, disconnect
 from utils.log_message import log_message
 
@@ -15,6 +14,5 @@ def fetch_recipe_by_name(name: str):
     except Exception:
         raise IOError('Error getting categories')
     finally:
-        log_message(message='fetch_recipe_by_name call is disconnected')
         disconnect(connection)
         return recipes_by_name

@@ -1,12 +1,9 @@
 from telegram.ext import filters
-
 from utils.config import TOKEN
 from contollers.button_controller import button_controller
 from contollers.error_controller import error_handler
 from contollers.message_controller import set_message_command, get_message_command, message_controller
-
 from contollers.photo_controller import photo_controller
-
 from start import start
 from telegram.ext import Application, CommandHandler, MessageHandler, CallbackQueryHandler
 
@@ -25,8 +22,8 @@ def main():
     application.add_handler(command_set)
 
     application.add_handler(CallbackQueryHandler(button_controller, block=False))
-    application.add_handler(MessageHandler(filters.PHOTO, photo_controller, block=False))
-    application.add_handler(MessageHandler(filters.TEXT, message_controller, block=False))
+    application.add_handler(MessageHandler(filters.PHOTO & (~ filters.TEXT), photo_controller, block=False))
+    application.add_handler(MessageHandler(filters.TEXT & (~ filters.PHOTO), message_controller, block=False))
 
     application.run_polling()
 

@@ -1,14 +1,13 @@
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto, Update
+import utils.config as configurations
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.constants import ParseMode
 from telegram.ext import CallbackContext
-
 from server.fetchactions.fetch_recipe_by_name import fetch_recipe_by_name
 from utils.check_user import check_user
-
 from server.fetchactions.fetch_category_item import fetch_category_items
 from server.fetchactions.fetch_all_recipes import fetch_all_recipes as fetch_all_recipes
-
-import utils.config as configurations
+from utils.clear_config import clear_configurations
+from utils.photos.download_images import download_images
 
 
 async def get_category_item(update: Update, context: CallbackContext, recipe_type):
@@ -78,23 +77,17 @@ async def get_item(update: Update, context: CallbackContext, item):
     await context.bot.send_message(update.message.chat.id, string, parse_mode=ParseMode.HTML)
 
     if item[3] != 'NULL' and item[3] != 'None' and item[3] is not None:
-        photo_array_raw = item[3].split(", ")
-        photo_array = []
-
-        for image in photo_array_raw:
-            file = InputMediaPhoto(media=open(image, 'rb'))
-            photo_array.append(file)
-
-        await context.bot.send_media_group(chat_id=update.message.chat.id, media=photo_array)
+        image_list = download_images(item[3])
+        if image_list[0]:  # Bytearray can be empty
+            await context.bot.send_media_group(chat_id=update.message.chat.id, media=image_list)
 
     if check_user(name=update.effective_user.username, user_id=update.effective_user.id):
-        print('configurations.transaction_data = item', item)
         configurations.transaction_data = item
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton(text="Удалить рецепт ❌", callback_data="удалить")],
                                              [InlineKeyboardButton(text="Изменить рецепт ⚠️", callback_data="изменить")]
                                              ])
 
-        await update.message.reply_text("Опции: ⚙️", reply_markup=reply_markup)
+        await update.message.reply_text("⚙️Опции:", reply_markup=reply_markup)
 
     else:
-        configurations.clear()
+        clear_configurations()
