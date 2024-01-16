@@ -19,7 +19,7 @@ def clear_configurations():
     configurations.update_recipe = False
     # UTILS
     configurations.start = True
-    configurations.db_set_trans = False
+    configurations.db_set_transition = False
     configurations.db_change = False
     configurations.recipe_type = False
     #  OTHER
@@ -27,3 +27,4 @@ def clear_configurations():
     configurations.db_con = None
     configurations.data_array = []
     configurations.transaction_data = None
+    configurations.photo_list = []

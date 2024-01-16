@@ -1,13 +1,11 @@
+import utils.config as configurations
+
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.ext import CallbackContext
-
 from server.fetchactions.fetch_subcategory import fetch_subcategory
 from utils.check_user import check_user
 from utils.prepare_keyboard import prepare_keyboard
 from utils.clear_config import clear_configurations
-from utils.recipe_mapping import recipe_types
-
-import utils.config as configurations
 from models.recipe import Recipe
 
 
@@ -36,7 +34,6 @@ async def ask_subcategory(update: Update, recipe_type):
 async def set_new_recipe(update: Update, context: CallbackContext, recipe_type):
     configurations.set_action = True
     recipe = Recipe()
-    recipe_string = recipe_types[recipe_type]
-    recipe.recipe_type = recipe_string
+    recipe.recipe_type = recipe_type
     configurations.recipe_object = recipe
     await context.bot.send_message(update.callback_query.message.chat_id, "Отлично! Укажите имя будущего рецепта 🍽️")

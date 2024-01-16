@@ -1,8 +1,8 @@
-from telegram import InlineKeyboardMarkup, InlineKeyboardButton
-from telegram.constants import ParseMode
-
 import utils.config as configurations
 import db
+
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton
+from telegram.constants import ParseMode
 
 
 async def update_name(update, context, text):
@@ -30,7 +30,7 @@ async def update_description(update, context, text):
         "Хорошо, новое описание выглядит так: <i><b>" + text + "</b></i>",
         parse_mode=ParseMode.HTML
     )
-    configurations.recipe_object.detail = text
+    configurations.recipe_object.description = text
     context.bot.send_message(
         update.message.chat.id,
         "Переходим к изменению рецепта в базе данных..."

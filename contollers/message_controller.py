@@ -1,15 +1,15 @@
-from telegram.ext import CallbackContext
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
-from telegram.constants import ParseMode
-
 import db
 import utils.config as configurations
 
+from telegram.ext import CallbackContext
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram.constants import ParseMode
+from server.setactions.set_recipe import set_recipe
 from utils.clear_config import clear_configurations
 from set_recipe import _set_init
 from get_recipe import get_name, get_item
-
 from update_recipe import update_name, update_description
+from utils.photos.upload_photos import upload_photos
 
 
 async def set_message_command(update: Update, context: CallbackContext):
@@ -66,7 +66,6 @@ async def message_controller(update: Update, context: CallbackContext):
             )
 
         elif recipe_object.index == 1:
-            print('recipe_object.index += 1', recipe_object)
             recipe_object.index += 1
             recipe_object.description = text
             await context.bot.send_message(
@@ -83,12 +82,14 @@ async def message_controller(update: Update, context: CallbackContext):
                 reply_markup=reply_markup
             )
 
-    elif configurations.db_set_trans is True or configurations.db_change is True:
+    elif configurations.db_set_transition is True or configurations.db_change is True:
         if text.lower() == 'готово':
 
-            if configurations.db_set_trans:
-                configurations.db_set_trans = False
-                await db.save_recipe(update.message.chat.id, context.bot)
+            if configurations.db_set_transition:
+                await context.bot.send_message(update.effective_chat.id, "Сохраняем фотографии...📸")
+                upload_photos()
+                await set_recipe(update.message.chat.id, context.bot)
+                configurations.db_set_transition = False
 
             elif configurations.db_change:
                 configurations.db_change = False
@@ -105,10 +106,6 @@ async def message_controller(update: Update, context: CallbackContext):
 
     elif configurations.recipe_type is True:
         try:
-            print('config.data_array', configurations.data_array)
-            print('int(text)', int(text))
-            print('config.data_array[int(text) - 1]', configurations.data_array[int(text) - 1])
-
             await get_item(update, context, configurations.data_array[int(text) - 1])
             configurations.recipe_type = False
         except ValueError:

@@ -1,6 +1,4 @@
-from datetime import datetime
 from sqlite3 import Cursor, Connection
-
 from server.communication import connect, disconnect
 from utils.log_message import log_message
 
@@ -16,6 +14,5 @@ def fetch_category_items(recipe_type: str) -> list:
     except Exception:
         raise IOError('Error getting category items')
     finally:
-        log_message(message='fetch_category_item call is disconnected')
         disconnect(connection)
         return category_items

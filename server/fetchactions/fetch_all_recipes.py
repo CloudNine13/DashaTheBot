@@ -14,6 +14,5 @@ def fetch_all_recipes() -> Cursor | None:
     except Exception:
         raise IOError('Error getting all recipes')
     finally:
-        log_message(message='fetch_all_recipes call is disconnected')
         disconnect(connection)
         return all_recipes
