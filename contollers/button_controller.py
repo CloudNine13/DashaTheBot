@@ -22,7 +22,7 @@ async def button_controller(update: Update, context: CallbackContext):
     if configurations.set_init is True or configurations.get_category is True:
         await context.bot.send_message(
             update.callback_query.message.chat.id,
-            'Вы выбрали: <i><b>' + choice[:-1] + '</b></i> ' + random_emoji(),
+            f'Вы выбрали: <i><b>{choice[:-1]}</b></i> {random_emoji()}',
             parse_mode=ParseMode.HTML
         )
         if choice[-1] == '1':
@@ -52,8 +52,7 @@ async def button_controller(update: Update, context: CallbackContext):
             await update.callback_query.message.reply_text(
                 'Жду изображений! Пожалуйста, после загрузки медиа, нажмите готово, чтобы '
                 'подтвердить сохранение картинок. Документы, не относящиеся к картинкам или'
-                f'фотографии, отправленные файлами не будут обработаны (ограничение телеграмм '
-                f'бота 😞). Спасибо {random_heart()}!',
+                f'фотографиям, не будут обработаны (ограничение телеграмм бота 😞). Спасибо {random_heart()}!',
                 reply_markup=reply_markup
             )
 
@@ -63,7 +62,7 @@ async def button_controller(update: Update, context: CallbackContext):
             assert recipe_object.index == recipe_object.max_index
             await context.bot.send_message(
                 update.callback_query.message.chat.id,
-                'Ну что же! Переходим к сохранению рецепта! Спасибо ' + random_heart()
+                f'Ну что же! Переходим к сохранению рецепта! Спасибо {random_heart()}'
             )
             if configurations.db_set_transition:
                 await set_recipe(update.callback_query.message.chat.id, context.bot)
@@ -74,7 +73,7 @@ async def button_controller(update: Update, context: CallbackContext):
         configurations.get_init = False
         await context.bot.send_message(
             update.callback_query.message.chat.id,
-            'Хорошо, будем искать <i><b>' + choice + '</b></i> ',
+            f'Хорошо, будем искать <i><b>{choice}</b></i> ',
             parse_mode=ParseMode.HTML
         )
 
@@ -104,7 +103,7 @@ async def button_controller(update: Update, context: CallbackContext):
             await db.delete_item(update.callback_query.message.chat.id, context.bot)
             await context.bot.send_message(
                 update.callback_query.message.chat.id,
-                'Рецепт удалён! Не забудьте обязательно добавить новый! ' + random_heart()
+                f'Рецепт удалён! Не забудьте обязательно добавить новый! {random_heart()}'
             )
             clear_configurations()
 

@@ -21,7 +21,7 @@ def clear_configurations():
     configurations.start = True
     configurations.db_set_transition = False
     configurations.db_change = False
-    configurations.recipe_type = False
+    configurations.selecting_recipe = False
     #  OTHER
     configurations.recipe_object = Recipe()
     configurations.db_con = None

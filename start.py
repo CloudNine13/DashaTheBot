@@ -12,7 +12,7 @@ async def start(update: Update, _):
     send_database_button = []
 
     if check_developer(update.effective_user.username, update.effective_user.id):
-        send_database_button = [KeyboardButton(text="База данных")]
+        send_database_button = [KeyboardButton(text="База данных 📓")]
 
     main_menu_keyboard = [[KeyboardButton(text="Посмотреть рецепт\U0001F967")],
                           [KeyboardButton(text="Добавить рецепт\U0001f50e")], send_database_button]
@@ -21,5 +21,5 @@ async def start(update: Update, _):
 
     um: Message = update.message
 
-    await um.reply_text(text="Добро пожаловать! Это бот для рецептов, принадлежащий Дашульке!" + random_heart())
+    await um.reply_text(text=f"Добро пожаловать! Это бот для рецептов, принадлежащий Дашульке! {random_heart()}")
     await um.reply_text(text="Что бы вы хотели сделать?", reply_markup=main_menu)

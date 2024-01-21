@@ -11,10 +11,10 @@ from models.recipe import Recipe
 
 async def _set_init(update: Update, context: CallbackContext):
     configurations.set_init = True  # Set init on
-    reply_markup = prepare_keyboard()
     await context.bot.send_message(update.message.chat_id, "Добрый день! ☀️")
 
     if check_user(update.effective_user.username, update.effective_user.id):
+        reply_markup = prepare_keyboard()
         await update.message.reply_text("Какой рецепт вы хотите добавить?", reply_markup=reply_markup)
 
     else:

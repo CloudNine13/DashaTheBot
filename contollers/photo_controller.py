@@ -5,7 +5,6 @@ from telegram import Update
 from telegram.ext import CallbackContext
 
 
-
 async def photo_controller(update: Update, context: CallbackContext):
     recipe_object = configurations.recipe_object
     if configurations.db_set_transition is True and recipe_object.index == 3:
