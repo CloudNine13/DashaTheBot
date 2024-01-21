@@ -24,7 +24,7 @@ update_recipe: bool = False
 start: bool = True
 db_set_transition: bool = False
 db_change: bool = False
-recipe_type: bool = False
+selecting_recipe: bool = False
 #  OTHER
 recipe_object: Recipe | None = None
 db_con: Connection | None = None
@@ -53,7 +53,7 @@ def print_configurations():
         f'start: {start}\n'
         f'db_set_trans: {db_set_transition}\n'
         f'db_change: {db_change}\n'
-        f'recipe_type: {recipe_type}\n'
+        f'recipe_type: {selecting_recipe}\n'
         f'recipe_object: {recipe_object}\n\n'
         '# OTHER\n'
         f'db_con: {db_con}\n'
@@ -67,12 +67,19 @@ def print_configurations():
 nest_asyncio.apply()
 load_dotenv()
 
+
+def int_credentials_getter(creds):
+    try:
+        return int(creds)
+    except TypeError:
+        return creds
+
+
 TOKEN: str = os.getenv('TOKEN')
 DASHA_NAME: str = os.getenv('DASHA_USER')
-DASHA_ID: int = int(os.getenv('DASHA_ID'))
+DASHA_ID: int = int_credentials_getter(os.getenv('DASHA_ID'))
 IGOR_NAME: str = os.getenv('IGOR_NAME')
-IGOR_ID: int = int(os.getenv('IGOR_ID'))
-MONGO_URI: str = os.getenv('MONGO_URI')
+IGOR_ID: int = int_credentials_getter(os.getenv('IGOR_ID'))
 CLOUD_NAME: str = os.getenv('CLOUD_NAME')
 API_KEY: str = os.getenv('API_KEY')
 API_SECRET: str = os.getenv('API_SECRET')

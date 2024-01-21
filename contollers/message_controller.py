@@ -57,7 +57,7 @@ async def message_controller(update: Update, context: CallbackContext):
             recipe_object.name = text
             await context.bot.send_message(
                 update.message.chat.id,
-                'Вы указали имя: <i><b>' + text + '</b></i>',
+                f'Вы указали имя: <i><b>{text}</b></i>',
                 parse_mode=ParseMode.HTML
             )
             await context.bot.send_message(
@@ -70,7 +70,7 @@ async def message_controller(update: Update, context: CallbackContext):
             recipe_object.description = text
             await context.bot.send_message(
                 update.message.chat.id,
-                'О рецепте нам известно следующее: <i><b>' + text + '</b></i>',
+                f'О рецепте нам известно следующее: <i><b>{text}</b></i>',
                 parse_mode=ParseMode.HTML
             )
             keyboard = [
@@ -99,15 +99,15 @@ async def message_controller(update: Update, context: CallbackContext):
         configurations.get_name = False
         await context.bot.send_message(
             update.message.chat.id,
-            'Всё понял, ищем <i><b>' + text + '</b></i>',
+            f'Всё понял, ищем <i><b>{text}</b></i>',
             parse_mode=ParseMode.HTML
         )
         await get_name(update, context, text)
 
-    elif configurations.recipe_type is True:
+    elif configurations.selecting_recipe is True:
         try:
             await get_item(update, context, configurations.data_array[int(text) - 1])
-            configurations.recipe_type = False
+            configurations.selecting_recipe = False
         except ValueError:
             await context.bot.send_message(
                 update.message.chat.id,

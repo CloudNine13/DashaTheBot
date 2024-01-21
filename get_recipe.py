@@ -23,7 +23,7 @@ async def get_category_item(update: Update, context: CallbackContext, recipe_typ
         info_string = 'Ничего не найдено! Уточните название или <u>добавьте новый рецепт</u>!'
         await context.bot.send_message(update.effective_chat.id, info_string, parse_mode=ParseMode.HTML)
     else:
-        configurations.recipe_type = True
+        configurations.selecting_recipe = True
         await context.bot.send_message(update.effective_chat.id, info_string, parse_mode=ParseMode.HTML)
         await update.effective_message.reply_text("Введите цифру интересующего вас рецепта")
 
@@ -44,7 +44,7 @@ async def get_name(update: Update, context: CallbackContext, name: str):
         info_string = 'Ничего не найдено! Уточните название или <u>добавьте новый рецепт</u>!'
         await context.bot.send_message(update.effective_chat.id, info_string, parse_mode=ParseMode.HTML)
     else:
-        configurations.recipe_type = True
+        configurations.selecting_recipe = True
         await context.bot.send_message(update.effective_chat.id, info_string, parse_mode=ParseMode.HTML)
         await update.effective_message.reply_text("Введите цифру интересующего вас рецепта")
 
@@ -67,7 +67,7 @@ async def get_all(update: Update, context: CallbackContext):
         await context.bot.send_message(update.effective_chat.id, info_string, parse_mode=ParseMode.HTML)
 
     else:
-        configurations.recipe_type = True
+        configurations.selecting_recipe = True
         await context.bot.send_message(update.effective_chat.id, info_string, parse_mode=ParseMode.HTML)
         await update.effective_message.reply_text("Введите цифру интересующего вас рецепта")
 
@@ -86,8 +86,8 @@ async def get_item(update: Update, context: CallbackContext, item):
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton(text="Удалить рецепт ❌", callback_data="удалить")],
                                              [InlineKeyboardButton(text="Изменить рецепт ⚠️", callback_data="изменить")]
                                              ])
-
-        await update.message.reply_text("⚙️Опции:", reply_markup=reply_markup)
+        configurations.print_configurations()
+        await update.message.reply_text("⚙️ Опции:", reply_markup=reply_markup)
 
     else:
         clear_configurations()
