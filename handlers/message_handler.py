@@ -1,4 +1,3 @@
-import db
 import utils.config as configurations
 
 from telegram.ext import CallbackContext
@@ -9,22 +8,22 @@ from utils.clear_config import clear_configurations
 from set_recipe import _set_init
 from get_recipe import get_name, get_item
 from update_recipe import update_name, update_description
-from utils.photos.upload_photos import upload_photos
+from utils.images.upload_images import upload_images
 
 
 async def set_message_command(update: Update, context: CallbackContext):
     configurations.start = True  # Start on
     clear_configurations()
-    await message_controller(update, context)
+    await message_handler(update, context)
 
 
 async def get_message_command(update: Update, context: CallbackContext):
     configurations.start = True  # Start on
     clear_configurations()
-    await message_controller(update, context)
+    await message_handler(update, context)
 
 
-async def message_controller(update: Update, context: CallbackContext):
+async def message_handler(update: Update, context: CallbackContext):
     text: str | None = update.message.text
 
     if configurations.start is True:
@@ -45,7 +44,7 @@ async def message_controller(update: Update, context: CallbackContext):
         elif text == 'Добавить рецепт\U0001f50e' or text == '/set':
             await _set_init(update, context)
 
-        elif text == 'База данных':
+        elif text == 'База данных 📓':
             database = open('recipes.db', 'rb')
             await context.bot.send_document(chat_id=update.message.chat_id, document=database)
             database.close()
@@ -87,7 +86,7 @@ async def message_controller(update: Update, context: CallbackContext):
 
             if configurations.db_set_transition:
                 await context.bot.send_message(update.effective_chat.id, "Сохраняем фотографии...📸")
-                upload_photos()
+                upload_images()
                 await set_recipe(update.message.chat.id, context.bot)
                 configurations.db_set_transition = False
 

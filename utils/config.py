@@ -14,7 +14,7 @@ get_category: bool = False
 get_name: bool = False
 get_init: bool = False
 # DELETE/UPDATE
-can_change: bool = False
+modify_recipe: bool = False
 # UPDATE
 change_photo: bool = False
 change_name: bool = False
@@ -29,7 +29,7 @@ selecting_recipe: bool = False
 recipe_object: Recipe | None = None
 db_con: Connection | None = None
 data_array: list[Recipe] = []
-transaction_data = None
+data_to_modify: tuple[str, str, str, str | None] | None = None  # (name, recipe_type, desc, photo)
 photo_list: list = []
 
 
@@ -43,7 +43,7 @@ def print_configurations():
         f'get_name: {get_name}\n'
         f'get_init: {get_init}\n\n'
         '# DELETE / UPDATE\n'
-        f'can_change: {can_change}\n\n'
+        f'modify_recipe: {modify_recipe}\n\n'
         '# UPDATE\n'
         f'change_photo: {change_photo}\n'
         f'change_name: {change_name}\n'
@@ -53,12 +53,12 @@ def print_configurations():
         f'start: {start}\n'
         f'db_set_trans: {db_set_transition}\n'
         f'db_change: {db_change}\n'
-        f'recipe_type: {selecting_recipe}\n'
+        f'selecting_recipe: {selecting_recipe}\n'
         f'recipe_object: {recipe_object}\n\n'
         '# OTHER\n'
         f'db_con: {db_con}\n'
         f'data_array: {data_array}\n'
-        f'transaction_data: {transaction_data}\n'
+        f'transaction_data: {data_to_modify}\n'
         f'photo_list: {photo_list}\n'
     )
 
