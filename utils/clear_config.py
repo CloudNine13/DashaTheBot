@@ -11,7 +11,7 @@ def clear_configurations():
     configurations.get_name = False
     configurations.get_init = False
     # DELETE/UPDATE
-    configurations.can_change = False
+    configurations.modify_recipe = False
     # UPDATE
     configurations.change_photo = False
     configurations.change_name = False
@@ -26,5 +26,5 @@ def clear_configurations():
     configurations.recipe_object = Recipe()
     configurations.db_con = None
     configurations.data_array = []
-    configurations.transaction_data = None
+    configurations.data_to_modify = None
     configurations.photo_list = []

@@ -1,4 +1,5 @@
 import utils.config as configurations
+
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from telegram.constants import ParseMode
 from telegram.ext import CallbackContext
@@ -7,7 +8,7 @@ from utils.check_user import check_user
 from server.fetchactions.fetch_category_item import fetch_category_items
 from server.fetchactions.fetch_all_recipes import fetch_all_recipes as fetch_all_recipes
 from utils.clear_config import clear_configurations
-from utils.photos.download_images import download_images
+from utils.images.download_images import download_images
 
 
 async def get_category_item(update: Update, context: CallbackContext, recipe_type):
@@ -82,11 +83,14 @@ async def get_item(update: Update, context: CallbackContext, item):
             await context.bot.send_media_group(chat_id=update.message.chat.id, media=image_list)
 
     if check_user(name=update.effective_user.username, user_id=update.effective_user.id):
-        configurations.transaction_data = item
+        configurations.selecting_recipe = False
+        configurations.data_array = []
+        configurations.data_to_modify = item
+        configurations.modify_recipe = True
+
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton(text="Удалить рецепт ❌", callback_data="удалить")],
                                              [InlineKeyboardButton(text="Изменить рецепт ⚠️", callback_data="изменить")]
                                              ])
-        configurations.print_configurations()
         await update.message.reply_text("⚙️ Опции:", reply_markup=reply_markup)
 
     else:

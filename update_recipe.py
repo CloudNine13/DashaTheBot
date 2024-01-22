@@ -1,5 +1,4 @@
 import utils.config as configurations
-import db
 
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.constants import ParseMode

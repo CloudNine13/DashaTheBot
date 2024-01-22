@@ -1,19 +1,21 @@
-import db
 import utils.config as configurations
 
 from telegram.ext import CallbackContext
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update, KeyboardButton, ReplyKeyboardMarkup
 from telegram.constants import ParseMode
+
+from server.deleteactions.delete_recipe import delete_recipe
 from server.setactions.set_recipe import set_recipe
-from utils.randomizer import random_heart, random_emoji
 from utils.clear_config import clear_configurations
+from utils.images.delete_images import delete_images
+from utils.randomizer import random_heart, random_emoji
 from utils.prepare_keyboard import prepare_keyboard
 from models.recipe import Recipe
 from set_recipe import ask_subcategory, set_new_recipe
 from get_recipe import get_category_item, get_all
 
 
-async def button_controller(update: Update, context: CallbackContext):
+async def button_handler(update: Update, context: CallbackContext):
     query = update.callback_query
     await query.answer()
 
@@ -51,7 +53,7 @@ async def button_controller(update: Update, context: CallbackContext):
             reply_markup = ReplyKeyboardMarkup(keyboard=keyboard, resize_keyboard=True, one_time_keyboard=True)
             await update.callback_query.message.reply_text(
                 'Жду изображений! Пожалуйста, после загрузки медиа, нажмите готово, чтобы '
-                'подтвердить сохранение картинок. Документы, не относящиеся к картинкам или'
+                'подтвердить сохранение картинок. Документы, не относящиеся к картинкам или '
                 f'фотографиям, не будут обработаны (ограничение телеграмм бота 😞). Спасибо {random_heart()}!',
                 reply_markup=reply_markup
             )
@@ -96,24 +98,30 @@ async def button_controller(update: Update, context: CallbackContext):
             configurations.get_all = True
             await get_all(update, context)
 
-    elif configurations.can_change is True and configurations.transaction_data is not None:
-        configurations.can_change = False
+    elif configurations.modify_recipe is True and configurations.data_to_modify is not None:
+        configurations.modify_recipe = False
 
         if choice == 'удалить':
-            await db.delete_item(update.callback_query.message.chat.id, context.bot)
+            if configurations.data_to_modify[3] is not None:
+                images = configurations.data_to_modify[3]
+                images_list = [image.strip() for image in images.split(sep=',')]
+                delete_images(images_list)
+
+            deleted_name = delete_recipe()
             await context.bot.send_message(
                 update.callback_query.message.chat.id,
-                f'Рецепт удалён! Не забудьте обязательно добавить новый! {random_heart()}'
+                f'Рецепт <ins><b>{deleted_name}</b></ins> удалён! Не забудьте обязательно добавить новый! {random_heart()}',
+                parse_mode=ParseMode.HTML
             )
             clear_configurations()
 
         elif choice == 'изменить':
             configurations.update_recipe = True
             configurations.recipe_object = Recipe()
-            configurations.recipe_object.name = configurations.transaction_data[0]
-            configurations.recipe_object.recipe_type = configurations.transaction_data[1]
-            configurations.recipe_object.description = configurations.transaction_data[2]
-            configurations.recipe_object.photo_path = configurations.transaction_data[3]
+            configurations.recipe_object.name = configurations.data_to_modify[0]
+            configurations.recipe_object.recipe_type = configurations.data_to_modify[1]
+            configurations.recipe_object.description = configurations.data_to_modify[2]
+            configurations.recipe_object.photo_path = configurations.data_to_modify[3]
             keyboard = [
                 [InlineKeyboardButton('Да', callback_data='Да, имя'),
                  InlineKeyboardButton('Нет', callback_data='Нет, имя')]
